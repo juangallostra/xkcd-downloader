@@ -103,7 +103,6 @@ parser.add_argument('-e','--explain', help='get comic explanations', action='sto
 args = parser.parse_args()
 
 ## Main function
-## Main function
 def main():
         if args.get and args.comics != []:
                 # Check if there was a comic range specified in the arguments
