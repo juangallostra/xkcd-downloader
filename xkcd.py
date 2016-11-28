@@ -3,10 +3,8 @@
 # -*- coding: utf-8 -*-
 
 ## Imports
-import urllib, re, io, os, urllib2, bs4, sys
+import urllib, re, io, os, urllib2, bs4, sys, argparse
 from PIL import Image
-import argparse
-
 
 
 ## Comic grabber class
@@ -158,11 +156,6 @@ def main():
                             sys.exit()
 
 
-
 # Main program
 if __name__=="__main__":
         main()
-    
-
-    
-    
