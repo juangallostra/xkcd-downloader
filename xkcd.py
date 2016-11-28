@@ -95,7 +95,7 @@ class Comic_grabber():
 ## Command line argument parsing
 parser = argparse.ArgumentParser(description='Program to download xkcd comics')
 
-parser.add_argument('comics', metavar='N', type=int, nargs='*', help='comic numbers')
+parser.add_argument('comics', metavar='N', type=str, nargs='*', help='Comic numbers. Can be a combination of ranges: i-j and individual comics: i, or left blank which, when combined with the flag -g will download the latest comic')
 parser.add_argument('-g','--get', help='get comic images', action='store_true')
 parser.add_argument('-s','--show', help='show comic images', action='store_true')
 parser.add_argument('-e','--explain', help='get comic explanations', action='store_true')
