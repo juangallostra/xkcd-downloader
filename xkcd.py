@@ -135,7 +135,8 @@ def main():
                 download_succesful = last_comic.download_image()
                 if download_succesful:
                         print 'Comic downloaded successfully'
-                        
+                        if args.show:
+                                last_comic.show_image()                        
                 if args.explain:
                         print last_comic.get_explanation()
         else: 
