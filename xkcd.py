@@ -148,6 +148,7 @@ def main():
                     s=comics[-1].download_image()
                     if s:
                         print 'Comics downloaded successfully'
+                        comics[-1].show_image()                        
                         print comics[-1].get_explanation()
             
                     more_comics = raw_input("Want to search for another comic? (y/n): ")
