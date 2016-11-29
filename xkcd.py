@@ -53,8 +53,25 @@ class Comic_grabber():
                         return False
 
         def show_image(self):
-                im = Image.open(os.getcwd()+'\\'+self.comic_name)
+                image = self.get_image_dir()
+                print image
+                im = Image.open(image)
                 im.show()
+
+        def get_image_dir(self):
+            wd=os.getcwd()
+            files=os.listdir(wd)
+            #find images
+            for f in files:
+                string = ''
+                for i in range(1,5):
+                    string+=f[-i]
+                q=string[::-1]
+                t=q.upper()
+                if t in ('.GIF','.BMP','.PNG','JPEG','EXIF','TIFF','.PPM','.PAM','.JPG') and self.comic_name in f:
+                    ima=f
+                    return ima
+            return False
 
         # Get explanation from explainxkcd
         def get_explanation(self):
