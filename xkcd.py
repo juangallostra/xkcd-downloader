@@ -51,10 +51,9 @@ class Comic_grabber():
                 except:
                         print "An error ocurred while downloading comic"
                         return False
-
+        # Show image
         def show_image(self):
-                im = Image.open(os.getcwd()+'\\'+self.comic_name)
-                im.show()
+                os.startfile(os.getcwd()+'\\'+self.comic_name)
 
         # Get explanation from explainxkcd
         def get_explanation(self):
@@ -136,7 +135,8 @@ def main():
                 download_succesful = last_comic.download_image()
                 if download_succesful:
                         print 'Comic downloaded successfully'
-                        
+                        if args.show:
+                                last_comic.show_image()                        
                 if args.explain:
                         print last_comic.get_explanation()
         else: 
@@ -148,6 +148,7 @@ def main():
                     s=comics[-1].download_image()
                     if s:
                         print 'Comics downloaded successfully'
+                        comics[-1].show_image()                        
                         print comics[-1].get_explanation()
             
                     more_comics = raw_input("Want to search for another comic? (y/n): ")
