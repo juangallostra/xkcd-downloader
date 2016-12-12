@@ -27,7 +27,7 @@ python xkcd.py 2-56 64 78-254 27 -g -e -s
 
 where the numbers specify the comics to download, the flag **-g** stands for **get** (if the flag is not present no comics will be downloaded), the flag **-e** stands for **explain** (will print explanations directly to console separating them y dashed lines) and the flag **-s** stands for **show**, which will show the downloaded comics.
 
-If no comic numbers or ranges are specified but the flag **-g** is set the latest comic will be downloaded
+If no comic numbers or ranges are specified but the flag **-g** is set the latest comic will be downloaded.
 
 ### Without command line arguments
 If no flags are passed the program will execute normally. Then it will ask for a specific comic number and download it. In the case that no input comic number is given, it will download the latest one. After that it will ask the user if another comic is to be downloaded. If the answer is no, the program will terminate its execution. 
