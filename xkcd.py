@@ -7,8 +7,8 @@ import urllib, re, io, os, urllib2, bs4, sys, argparse
 from PIL import Image
 
 
-## Comic grabber class
-class Comic_grabber():
+## Comic instance class
+class ComicInstance():
         '''
         This class contains the methods that allow the search and download of a concrete xkcd comic
         '''
@@ -113,7 +113,7 @@ def main():
                         comics_n = list(flatten(comics))
                 else:        
                         comics_n = [int(comic) for comic in args.comics]
-                comics = [Comic_grabber(str(comic_n), args.show) for comic_n in comics_n]
+                comics = [ComicInstance(str(comic_n), args.show) for comic_n in comics_n]
                 images = [comic.download_image() for comic in comics]
                 if False not in images:
                         print 'Comics downloaded successfully' 
@@ -131,7 +131,7 @@ def main():
                                 comic.show_image()
                                 
         elif args.get and args.comics == []:
-                last_comic = Comic_grabber('',True)
+                last_comic = ComicInstance('',True)
                 download_succesful = last_comic.download_image()
                 if download_succesful:
                         print 'Comic downloaded successfully'
@@ -144,7 +144,7 @@ def main():
                 get_more_comics = True
                 while get_more_comics:
                     comic_n = raw_input("Enter comic number: ")
-                    comics += [Comic_grabber(comic_n)]
+                    comics += [ComicInstance(comic_n)]
                     s=comics[-1].download_image()
                     if s:
                         print 'Comics downloaded successfully'
