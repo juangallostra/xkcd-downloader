@@ -22,11 +22,11 @@ class ComicInstance():
         # Grab comic image name from number
         def grab_name_from_number(self):
                 # build the url for the asked number comic and, once opened, read its html content.
-                url='http://xkcd.com/'+self.comic_number+'/'
+                url='https://xkcd.com/'+self.comic_number+'/'
                 text=urllib.urlopen(url).read()
 
                 # regex for retrieving image name
-                regex = 'http://imgs.xkcd.com/comics/(.*\.\w{1,3})'
+                regex = 'https://imgs.xkcd.com/comics/(.*\.\w{1,3})'
                 # search and return image name
                 matches = re.findall(regex,text)
                 if matches != []:
@@ -39,7 +39,7 @@ class ComicInstance():
         def download_image(self):
                 try:
                         # build image url
-                        url='http://imgs.xkcd.com/comics/'+self.comic_name
+                        url='https://imgs.xkcd.com/comics/'+self.comic_name
                         # retrieve image from the url
                         # this downloads and saves the image in the script path with name comic_name
                         i=urllib.URLopener()
