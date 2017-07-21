@@ -57,7 +57,7 @@ class ComicInstance():
                         # show comic in UI
                         return True
                 except:
-                        print "An error ocurred while downloading comic"
+                        print "An error ocurred while downloading comic "+str(self.comic_number)
                         return False
         # Show image
         def show_image(self):
@@ -116,7 +116,7 @@ args = parser.parse_args()
 def main():
     if args.all:
         # download all comics
-        index = 1
+        index = 1865
         while True:
             comic = ComicInstance(str(index), False)
             downloaded = comic.download_image()
@@ -124,6 +124,9 @@ def main():
                 print 'Successfully downloaded comic '+str(index)
                 if args.show:
                     comic.show_image()
+            else:
+                print 'Exiting'
+                return 
             index += 1
    
     elif args.get and args.comics != []:
@@ -182,7 +185,7 @@ def main():
                 if more_comics != 'y':
                         get_more_comics = False
                         sys.exit()
-
+    return
 
 # Main program
 if __name__=="__main__":
