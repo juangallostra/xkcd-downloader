@@ -37,6 +37,6 @@ In this case, the program will always show the explanation at http://www.explain
 ## TODO
 - ~~When downloading more than one comic the **show** flag is not working well~~
 - ~~Add support for downloading ranges of comics in the way 1-100, which will download comics 1,2,3,...,100~~
-- Add support for downloading all comics
+- ~~add support for downloading all comics~~
 - Add support for downloading random comic
 - Add support for writing explanations into ```.txt``` files
