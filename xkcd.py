@@ -3,7 +3,15 @@
 # -*- coding: utf-8 -*-
 
 ## Imports
-import urllib, re, io, os, urllib2, bs4, sys, argparse
+import urllib
+import re
+import io
+import os
+import urllib2
+import bs4
+import sys
+import argparse
+import platform
 from PIL import Image
 
 
@@ -53,7 +61,11 @@ class ComicInstance():
                         return False
         # Show image
         def show_image(self):
-                os.startfile(os.getcwd()+'\\'+self.comic_name)
+		if platform.system() == 'Linux':
+			im = Image.open(self.comic_name)
+			im.show()
+		else:
+                	os.startfile(os.getcwd()+'\\'+self.comic_name)
 
         # Get explanation from explainxkcd
         def get_explanation(self):
