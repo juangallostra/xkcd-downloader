@@ -57,7 +57,7 @@ class ComicInstance():
                         # show comic in UI
                         return True
                 except:
-                        print "An error ocurred while downloading comic"
+                        print "An error ocurred while downloading comic "+str(self.comic_number)
                         return False
         # Show image
         def show_image(self):
@@ -104,70 +104,88 @@ class ComicInstance():
 ## Command line argument parsing
 parser = argparse.ArgumentParser(description='Program to download xkcd comics')
 
-parser.add_argument('comics', metavar='N', type=str, nargs='*', help='Comic numbers. Can be a combination of ranges: i-j and individual comics: i, or left blank which, when combined with the flag -g will download the latest comic')
-parser.add_argument('-g','--get', help='get comic images', action='store_true')
-parser.add_argument('-s','--show', help='show comic images', action='store_true')
-parser.add_argument('-e','--explain', help='get comic explanations', action='store_true')
+parser.add_argument('comics', metavar = 'N', type = str, nargs = '*', help = 'Comic numbers. Can be a combination of ranges: i-j and individual comics: i, or left blank which, when combined with the flag -g will download the latest comic')
+parser.add_argument('-g','--get', help = 'get comic images', action = 'store_true')
+parser.add_argument('-s','--show', help = 'show comic images', action = 'store_true')
+parser.add_argument('-e','--explain', help = 'get comic explanations', action = 'store_true')
+parser.add_argument('-a','--all', help = 'download all published comics', action = 'store_true') 
 
 args = parser.parse_args()
 
 ## Main function
 def main():
-        if args.get and args.comics != []:
-                # Check if there was a comic range specified in the arguments
-                if any('-' in r_comic for r_comic in args.comics):
-                        # get lowerbounds and upperbounds of ranges in sublists inside the list of desired comic numbers
-                        comics_range = [r.split('-') for r in args.comics]
-                        # generate the desired ranges and store them as sublists inside the list of desired comic numbers
-                        comics = [range(int(i[0]),int(i[1])+1) if len(i)>1 else int(i[0]) for i in comics_range]
-                        # Flatten list of lists to get all individual comic numbers to download
-                        flatten = lambda *args: (result for mid in args for result in (flatten(*mid) if isinstance(mid, list) else (mid,)))
-                        comics_n = list(flatten(comics))
-                else:        
-                        comics_n = [int(comic) for comic in args.comics]
-                comics = [ComicInstance(str(comic_n), args.show) for comic_n in comics_n]
-                images = [comic.download_image() for comic in comics]
-                if False not in images:
-                        print 'Comics downloaded successfully' 
-                
-                explanations = []
-                if args.explain == True:
-                        explanations = [comic.get_explanation() for comic in comics]
-                        for comic in comics:
-                                print '-'*30+comic.comic_name+'-'*30+'\n'
-                                print comic.txt_explanation
-                                print '-'*80+'\n'
-                                
-                for comic in comics:
-                        if args.show == True:
-                                comic.show_image()
-                                
-        elif args.get and args.comics == []:
-                last_comic = ComicInstance('',True)
-                download_succesful = last_comic.download_image()
-                if download_succesful:
-                        print 'Comic downloaded successfully'
-                        if args.show:
-                                last_comic.show_image()                        
-                if args.explain:
-                        print last_comic.get_explanation()
-        else: 
-                comics = []
-                get_more_comics = True
-                while get_more_comics:
-                    comic_n = raw_input("Enter comic number: ")
-                    comics += [ComicInstance(comic_n)]
-                    s=comics[-1].download_image()
-                    if s:
-                        print 'Comics downloaded successfully'
-                        comics[-1].show_image()                        
-                        print comics[-1].get_explanation()
+    if args.all:
+        # download all comics
+        index = 1
+        while True:
+            comic = ComicInstance(str(index), False)
+            downloaded = comic.download_image()
+            if downloaded:
+                print 'Successfully downloaded comic '+str(index)
+                if args.show:
+                    comic.show_image()
+            else:
+                print 'Exiting'
+                return 
+            index += 1
+   
+    elif args.get and args.comics != []:
+            # Check if there was a comic range specified in the arguments
+            if any('-' in r_comic for r_comic in args.comics):
+                    # get lowerbounds and upperbounds of ranges in sublists inside the list of desired comic numbers
+                    comics_range = [r.split('-') for r in args.comics]
+                    # generate the desired ranges and store them as sublists inside the list of desired comic numbers
+                    comics = [range(int(i[0]),int(i[1])+1) if len(i)>1 else int(i[0]) for i in comics_range]
+                    # Flatten list of lists to get all individual comic numbers to download
+                    flatten = lambda *args: (result for mid in args for result in (flatten(*mid) if isinstance(mid, list) else (mid,)))
+                    comics_n = list(flatten(comics))
+            else:        
+                    comics_n = [int(comic) for comic in args.comics]
             
-                    more_comics = raw_input("Want to search for another comic? (y/n): ")
-                    if more_comics != 'y':
-                            get_more_comics = False
-                            sys.exit()
-
+            comics = [ComicInstance(str(comic_n), args.show) for comic_n in comics_n]
+            images = [comic.download_image() for comic in comics]
+            
+            if False not in images:
+                    print 'Comics downloaded successfully' 
+            
+            explanations = []
+            if args.explain:
+                    explanations = [comic.get_explanation() for comic in comics]
+                    for comic in comics:
+                            print '-'*30+comic.comic_name+'-'*30+'\n'
+                            print comic.txt_explanation
+                            print '-'*80+'\n'
+                            
+            for comic in comics:
+                    if args.show:
+                            comic.show_image()
+                            
+    elif args.get and args.comics == []:
+            last_comic = ComicInstance('',True)
+            download_succesful = last_comic.download_image()
+            if download_succesful:
+                    print 'Comic downloaded successfully'
+                    if args.show:
+                            last_comic.show_image()                        
+            if args.explain:
+                    print last_comic.get_explanation()
+    else: 
+            comics = []
+            get_more_comics = True
+            while get_more_comics:
+                comic_n = raw_input("Enter comic number: ")
+                comics += [ComicInstance(comic_n)]
+                s=comics[-1].download_image()
+                if s:
+                    print 'Comics downloaded successfully'
+                    comics[-1].show_image()                        
+                    print comics[-1].get_explanation()
+        
+                more_comics = raw_input("Want to search for another comic? (y/n): ")
+                if more_comics != 'y':
+                        get_more_comics = False
+                        sys.exit()
+    return
 
 # Main program
 if __name__=="__main__":
