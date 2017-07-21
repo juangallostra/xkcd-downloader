@@ -116,7 +116,7 @@ args = parser.parse_args()
 def main():
     if args.all:
         # download all comics
-        index = 1865
+        index = 1
         while True:
             comic = ComicInstance(str(index), False)
             downloaded = comic.download_image()
