@@ -104,16 +104,22 @@ class ComicInstance():
 ## Command line argument parsing
 parser = argparse.ArgumentParser(description='Program to download xkcd comics')
 
-parser.add_argument('comics', metavar='N', type=str, nargs='*', help='Comic numbers. Can be a combination of ranges: i-j and individual comics: i, or left blank which, when combined with the flag -g will download the latest comic')
-parser.add_argument('-g','--get', help='get comic images', action='store_true')
-parser.add_argument('-s','--show', help='show comic images', action='store_true')
-parser.add_argument('-e','--explain', help='get comic explanations', action='store_true')
+parser.add_argument('comics', metavar = 'N', type = str, nargs = '*', help = 'Comic numbers. Can be a combination of ranges: i-j and individual comics: i, or left blank which, when combined with the flag -g will download the latest comic')
+parser.add_argument('-g','--get', help = 'get comic images', action = 'store_true')
+parser.add_argument('-s','--show', help = 'show comic images', action = 'store_true')
+parser.add_argument('-e','--explain', help = 'get comic explanations', action = 'store_true')
+parser.add_argument('-a','--all', help = 'download all published comics', action = 'store_true') 
 
 args = parser.parse_args()
 
 ## Main function
 def main():
-        if args.get and args.comics != []:
+
+	if args.all:
+		# download all comics
+		pass
+	
+        elif args.get and args.comics != []:
                 # Check if there was a comic range specified in the arguments
                 if any('-' in r_comic for r_comic in args.comics):
                         # get lowerbounds and upperbounds of ranges in sublists inside the list of desired comic numbers
