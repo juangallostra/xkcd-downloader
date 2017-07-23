@@ -12,8 +12,11 @@ import bs4
 import sys
 import argparse
 import platform
+import random
 from PIL import Image
 
+successful_download = 'Successfully downloaded comic'
+successful_downloads = 'Comics downloaded successfully'
 
 ## Comic instance class
 class ComicInstance():
@@ -108,9 +111,27 @@ parser.add_argument('comics', metavar = 'N', type = str, nargs = '*', help = 'Co
 parser.add_argument('-g','--get', help = 'get comic images', action = 'store_true')
 parser.add_argument('-s','--show', help = 'show comic images', action = 'store_true')
 parser.add_argument('-e','--explain', help = 'get comic explanations', action = 'store_true')
-parser.add_argument('-a','--all', help = 'download all published comics', action = 'store_true') 
+parser.add_argument('-a','--all', help = 'download all published comics', action = 'store_true')
+parser.add_argument('-r','--random', help = 'download a random comic', action = 'store_true')
 
 args = parser.parse_args()
+
+## Helper functions
+def get_max_comic(file):
+    current_max = None
+    increase = True
+    with open(file, "r") as f:
+        current_max = f.readline()
+    while increase:
+        with open(file, "w") as f:
+            f.write(current_max)
+        current_max = str(int(current_max)+1)
+        comic = ComicInstance(current_max, False)
+        if comic.grab_name_from_number() is None:
+            increase = False
+            print current_max, "out"
+
+    return int(current_max) 
 
 ## Main function
 def main():
@@ -121,13 +142,23 @@ def main():
             comic = ComicInstance(str(index), False)
             downloaded = comic.download_image()
             if downloaded:
-                print 'Successfully downloaded comic '+str(index)
+                print successful_download+str(index)
                 if args.show:
                     comic.show_image()
             else:
                 print 'Exiting'
                 return 
             index += 1
+
+    elif args.random:
+        min_comic = 1
+        max_comic = get_max_comic('xkcd_max.txt')+1
+        comic = ComicInstance(str(random.choice(range(min_comic, max_comic))))
+        downloaded = comic.download_image()
+        if downloaded:
+            print successful_download
+            if args.show:
+                comic.show_image()
    
     elif args.get and args.comics != []:
             # Check if there was a comic range specified in the arguments
@@ -146,7 +177,7 @@ def main():
             images = [comic.download_image() for comic in comics]
             
             if False not in images:
-                    print 'Comics downloaded successfully' 
+                    print successful_downloads 
             
             explanations = []
             if args.explain:
@@ -164,7 +195,7 @@ def main():
             last_comic = ComicInstance('',True)
             download_succesful = last_comic.download_image()
             if download_succesful:
-                    print 'Comic downloaded successfully'
+                    print successful_download
                     if args.show:
                             last_comic.show_image()                        
             if args.explain:
@@ -177,7 +208,7 @@ def main():
                 comics += [ComicInstance(comic_n)]
                 s=comics[-1].download_image()
                 if s:
-                    print 'Comics downloaded successfully'
+                    print successful_downloads
                     comics[-1].show_image()                        
                     print comics[-1].get_explanation()
         
