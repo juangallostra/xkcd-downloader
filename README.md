@@ -25,7 +25,7 @@ Or a combination of both:
 python xkcd.py 2-56 64 78-254 27 -g -e -s
 ``` 
 
-where the numbers specify the comics to download, the flag **-g** stands for **get** (if the flag is not present no comics will be downloaded), the flag **-e** stands for **explain** (will print explanations directly to console separating them y dashed lines) and the flag **-s** stands for **show**, which will show the downloaded comics. Finally, the flag **-a**, which stands for **all**, will download all the available comics. You will need some patience though.
+where the numbers specify the comics to download, the flag **-g** stands for **get** (if the flag is not present no comics will be downloaded), the flag **-e** stands for **explain** (will print explanations directly to console separating them y dashed lines) and the flag **-s** stands for **show**, which will show the downloaded comics. Finally, the flag **-r** downloads a **random** comic and the flag **-a** will download **all** the available comics. You will need some patience though.
 
 If no comic numbers or ranges are specified but the flag **-g** is set the latest comic will be downloaded.
 
@@ -37,7 +37,7 @@ In this case, the program will always show the explanation at http://www.explain
 ## TODO
 - ~~When downloading more than one comic the **show** flag is not working well~~
 - ~~Add support for downloading ranges of comics in the way 1-100, which will download comics 1,2,3,...,100~~
-- ~~add support for downloading all comics~~
-- Add support for downloading random comic
+- ~~Add support for downloading all comics~~
+- ~~Add support for downloading random comic~~
 - Add support for writing explanations into ```.txt``` files
 - Improve command line explanation format
