@@ -123,12 +123,13 @@ def get_max_comic(file):
     with open(file, "r") as f:
         current_max = f.readline()
     while increase:
+        with open(file, "w") as f:
+            f.write(current_max)
         current_max = str(int(current_max)+1)
         comic = ComicInstance(current_max, False)
         if comic.grab_name_from_number() is None:
             increase = False
-    with open(file, "w") as f:
-        f.write(current_max)
+            print current_max, "out"
 
     return int(current_max) 
 
