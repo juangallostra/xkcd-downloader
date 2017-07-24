@@ -15,7 +15,7 @@ import platform
 import random
 from PIL import Image
 
-successful_download = 'Successfully downloaded comic'
+successful_download = 'Successfully downloaded comic '
 successful_downloads = 'Comics downloaded successfully'
 
 ## Comic instance class
@@ -139,16 +139,17 @@ def main():
         # download all comics
         index = 1
         while True:
-            comic = ComicInstance(str(index), False)
-            downloaded = comic.download_image()
-            if downloaded:
-                print successful_download+str(index)
-                if args.show:
-                    comic.show_image()
-            else:
-                print 'Exiting'
-                return 
-            index += 1
+		if index != 404:
+            		comic = ComicInstance(str(index), False)
+            		downloaded = comic.download_image()
+            		if downloaded:
+                		print successful_download+str(index)
+                		if args.show:
+                    			comic.show_image()
+            		else:
+                		print 'Exiting'
+                		return 
+            	index += 1
 
     elif args.random:
         min_comic = 1
