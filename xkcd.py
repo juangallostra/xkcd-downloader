@@ -129,7 +129,6 @@ def get_max_comic(file):
         comic = ComicInstance(current_max, False)
         if comic.grab_name_from_number() is None:
             increase = False
-            print current_max, "out"
 
     return int(current_max) 
 
