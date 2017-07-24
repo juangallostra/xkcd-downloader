@@ -15,7 +15,7 @@ import platform
 import random
 from PIL import Image
 
-successful_download = 'Successfully downloaded comic'
+successful_download = 'Successfully downloaded comic '
 successful_downloads = 'Comics downloaded successfully'
 
 ## Comic instance class
