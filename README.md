@@ -5,6 +5,7 @@ Small program that allows the download and visualization of xkcd comics to the f
 - Python 2.7
 - Beautiful Soup
 - PIL
+- requests
 
 ## Downloading comics
 
