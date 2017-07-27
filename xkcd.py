@@ -4,11 +4,13 @@
 
 ## Imports
 import urllib
-import re
+#import re
 import io
 import os
 import urllib2
 import bs4
+import requests
+import json
 import sys
 import argparse
 import platform
@@ -20,88 +22,89 @@ successful_downloads = 'Comics downloaded successfully'
 
 ## Comic instance class
 class ComicInstance():
-        '''
-        This class contains the methods that allow the search and download of a concrete xkcd comic
-        '''
-        def __init__(self, comic_to_grab='', show_image=True):
-                self.comic_number = comic_to_grab
-                self.comic_name = self.grab_name_from_number()
-                self.show = show_image
-                self.txt_explanation = None
+    '''
+    This class contains the methods that allow the search and download of a concrete xkcd comic
+    '''
+    def __init__(self, comic_to_grab='', show_image=True):
+        self.comic_number = comic_to_grab
+        self._URL_init = 'https://xkcd.com/'
+        if comic_to_grab == '':
+            self._URL_end = 'info.0.json'
+        else:
+            self._URL_end = '/info.0.json'
+        self._IMG_EXTENSION = {'jpg':'JPEG', 'png':'PNG'}
+        self.image_url, self.comic_name = self.grab_image_url()
+        self.show = show_image
+        self.txt_explanation = None
 
+    # Grab comic image name from number
+    def grab_image_url(self):
+        # build the url for the asked number comic and, once opened, read its html content.
+        url = self._URL_init \
+             +self.comic_number \
+             +self._URL_end
+        resp = requests.get(url)
+        if resp.status_code == 200:
+            data = json.loads(resp.text)             
+            return data['img'], data['safe_title']    
+        return None, None          
 
-        # Grab comic image name from number
-        def grab_name_from_number(self):
-                # build the url for the asked number comic and, once opened, read its html content.
-                url='https://xkcd.com/'+self.comic_number+'/'
-                text=urllib.urlopen(url).read()
+    # Download image
+    def download_image(self):
+        try:
+            # retrieve image from the url
+            # this downloads and saves the image in the script path with name comic_name
+            i = urllib.URLopener()
+            s=i.retrieve(self.image_url,
+                         self.comic_name)
+            with Image.open(self.comic_name) as image:
+                image.save(self.comic_name, self._IMG_EXTENSION[self.image_url[-3:]])
+            # show comic in UI
+            return True
+        except:
+            print "An error ocurred while downloading comic " \
+                  +str(self.comic_number)
+            return False
+    # Show image
+    def show_image(self):
+        if platform.system() == 'Linux':
+            im = Image.open(self.comic_name)
+            im.show()
+        else:
+            os.startfile(os.getcwd()+'\\'+self.comic_name)
 
-                # regex for retrieving image name
-                regex = 'https://imgs.xkcd.com/comics/(.*\.\w{1,3})'
-                # search and return image name
-                matches = re.findall(regex,text)
-                if matches != []:
-                        return matches[0]
-                else:
-                        return None
+    # Get explanation from explainxkcd
+    def get_explanation(self):
+        # build url for explanation
+        if self.comic_number != '':
+            url='http://www.explainxkcd.com/wiki/index.php/'+self.comic_number
+        else:
+            url='http://www.explainxkcd.com/wiki/index.php/Main_Page'
 
+        # get html from url
+        opener = urllib2.build_opener()
+        opener.addheaders = [('User-Agent', 'Mozilla/5.0')]
+        response = opener.open(url)
+        page = bs4.BeautifulSoup(response.read(),'html.parser')
 
-        # Download image
-        def download_image(self):
-                try:
-                        # build image url
-                        url='https://imgs.xkcd.com/comics/'+self.comic_name
-                        # retrieve image from the url
-                        # this downloads and saves the image in the script path with name comic_name
-                        i=urllib.URLopener()
-                        s=i.retrieve(url,self.comic_name)
-                        image=Image.open(self.comic_name)
-                        image.save(self.comic_name)
-                        # show comic in UI
-                        return True
-                except:
-                        print "An error ocurred while downloading comic "+str(self.comic_number)
-                        return False
-        # Show image
-        def show_image(self):
-		if platform.system() == 'Linux':
-			im = Image.open(self.comic_name)
-			im.show()
-		else:
-                	os.startfile(os.getcwd()+'\\'+self.comic_name)
+        div = page.find('div', attrs={'id':'mw-content-text', 'class':'mw-content-ltr'})
 
-        # Get explanation from explainxkcd
-        def get_explanation(self):
-                # build url for explanation
-                if self.comic_number != '':
-                        url='http://www.explainxkcd.com/wiki/index.php/'+self.comic_number
-                else:
-                        url='http://www.explainxkcd.com/wiki/index.php/Main_Page'
+        # Find all of the text between paragraph tags and strip out the html
+        text = [t.getText() for t in div.find_all('p')]
+        text = [t.encode('ascii','ignore') for t in text] # make sure all characters are ascii encoded
 
-                # get html from url
-                opener = urllib2.build_opener()
-                opener.addheaders = [('User-Agent', 'Mozilla/5.0')]
-                response = opener.open(url)
-                page = bs4.BeautifulSoup(response.read(),'html.parser')
+        if self.comic_number != '':
+            explanation = '\n'.join(map(str, text))
 
-                div = page.find('div', attrs={'id':'mw-content-text', 'class':'mw-content-ltr'})
-
-                # Find all of the text between paragraph tags and strip out the html
-                text = [t.getText() for t in div.find_all('p')]
-                text = [t.encode('ascii','ignore') for t in text] # make sure all characters are ascii encoded
-
-                if self.comic_number != '':
-                        explanation = '\n'.join(map(str, text))
-
-                else:
-                        exp=[]
-                        i=2
-                        while text[i]!='Is this out of date? Clicking here will fix that.\n':
-                                exp += text[i]
-                                i+=1
-                        explanation = '\n'.join(map(str, exp))
-                self.txt_explanation = explanation
-                return explanation
+        else:
+            exp=[]
+            i=2
+            while text[i]!='Is this out of date? Clicking here will fix that.\n':
+                    exp += text[i]
+                    i+=1
+            explanation = '\n'.join(map(str, exp))
+        self.txt_explanation = explanation
+        return explanation
 
 
 ## Command line argument parsing
@@ -127,7 +130,7 @@ def get_max_comic(file):
             f.write(current_max)
         current_max = str(int(current_max)+1)
         comic = ComicInstance(current_max, False)
-        if comic.grab_name_from_number() is None:
+        if comic.grab_image_url()[0] is None:
             increase = False
 
     return int(current_max) 
