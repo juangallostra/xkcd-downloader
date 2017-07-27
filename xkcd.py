@@ -28,8 +28,11 @@ class ComicInstance():
     def __init__(self, comic_to_grab='', show_image=True):
         self.comic_number = comic_to_grab
         self._URL_init = 'https://xkcd.com/'
-        self._URL_end = '/info.0.json'
-        self._IMG_EXTENSION = 'JPEG'
+        if comic_to_grab == '':
+            self._URL_end = 'info.0.json'
+        else:
+            self._URL_end = '/info.0.json'
+        self._IMG_EXTENSION = {'jpg':'JPEG', 'png':'PNG'}
         self.image_url, self.comic_name = self.grab_image_url()
         self.show = show_image
         self.txt_explanation = None
@@ -55,7 +58,7 @@ class ComicInstance():
             s=i.retrieve(self.image_url,
                          self.comic_name)
             with Image.open(self.comic_name) as image:
-                image.save(self.comic_name, self._IMG_EXTENSION)
+                image.save(self.comic_name, self._IMG_EXTENSION[self.image_url[-3:]])
             # show comic in UI
             return True
         except:
