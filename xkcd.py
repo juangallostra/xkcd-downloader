@@ -33,6 +33,7 @@ class ComicInstance():
         else:
             self._URL_end = '/info.0.json'
         self._IMG_EXTENSION = {'jpg':'JPEG', 'png':'PNG'}
+	self._IMG_DIR = '/comic_images/' 
         self.image_url, self.comic_name = self.grab_image_url()
         self.show = show_image
         self.txt_explanation = None
@@ -58,7 +59,11 @@ class ComicInstance():
             s=i.retrieve(self.image_url,
                          self.comic_name)
             with Image.open(self.comic_name) as image:
-                image.save(self.comic_name, self._IMG_EXTENSION[self.image_url[-3:]])
+		# TODO -> Windows check
+		directory = os.getcwd()+self._IMG_DIR
+		if not os.path.exists(directory):
+			os.makedirs(directory)
+                image.save(directory+self.comic_name, self._IMG_EXTENSION[self.image_url[-3:]])
             # show comic in UI
             return True
         except:
