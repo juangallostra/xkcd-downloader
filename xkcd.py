@@ -33,7 +33,7 @@ class ComicInstance():
         else:
             self._URL_end = '/info.0.json'
         self._IMG_EXTENSION = {'jpg':'JPEG', 'png':'PNG'}
-	self._IMG_DIR = '/comic_images/' 
+	self._IMG_DIR = os.getcwd() + '/comic_images/' 
         self.image_url, self.comic_name = self.grab_image_url()
         self.show = show_image
         self.txt_explanation = None
@@ -60,11 +60,11 @@ class ComicInstance():
                          self.comic_name)
             with Image.open(self.comic_name) as image:
 		# TODO -> Windows check
-		directory = os.getcwd()+self._IMG_DIR
-		if not os.path.exists(directory):
-			os.makedirs(directory)
-                image.save(directory+self.comic_name, self._IMG_EXTENSION[self.image_url[-3:]])
+		if not os.path.exists(self._IMG_DIR):
+			os.makedirs(self._IMG_DIR)
+                image.save(self._IMG_DIR + self.comic_name, self._IMG_EXTENSION[self.image_url[-3:]])
             # show comic in UI
+	    os.remove(self.comic_name)
             return True
         except:
             print "An error ocurred while downloading comic " \
@@ -73,10 +73,10 @@ class ComicInstance():
     # Show image
     def show_image(self):
         if platform.system() == 'Linux':
-            im = Image.open(self.comic_name)
+            im = Image.open(self._IMG_DIR + self.comic_name)
             im.show()
         else:
-            os.startfile(os.getcwd()+'\\'+self.comic_name)
+            os.startfile(self._IMG_DIR + '\\'+self.comic_name)
 
     # Get explanation from explainxkcd
     def get_explanation(self):
