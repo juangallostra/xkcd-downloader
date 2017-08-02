@@ -32,7 +32,7 @@ class ComicInstance():
             self._URL_end = 'info.0.json'
         else:
             self._URL_end = '/info.0.json'
-        self._IMG_EXTENSION = {'jpg':'JPEG', 'png':'PNG'}
+        self._IMG_EXTENSION = {'jpg':'JPEG', 'png':'PNG', 'gif':'GIF'}
 	self._IMG_DIR = os.getcwd() + '/comic_images/' 
         self.image_url, self.comic_name = self.grab_image_url()
         self.show = show_image
@@ -56,9 +56,10 @@ class ComicInstance():
             # retrieve image from the url
             # this downloads and saves the image in the script path with name comic_name
             i = urllib.URLopener()
+	    # TODO -> handle special characters which result in errors
             s=i.retrieve(self.image_url,
                          self.comic_name)
-            with Image.open(self.comic_name) as image:
+	    with Image.open(self.comic_name) as image:
 		# TODO -> Windows check
 		if not os.path.exists(self._IMG_DIR):
 			os.makedirs(self._IMG_DIR)
