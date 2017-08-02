@@ -52,3 +52,4 @@ In this case, the program will always show the explanation at http://www.explain
 - ~~Add support for downloading random comic~~
 - Add support for writing explanations into ```.txt``` files
 - Improve explanation format when printed in terminal
+- Fix download error when image name has special characters such as underscores.
