@@ -47,13 +47,15 @@ class ComicInstance():
         resp = requests.get(url)
         if resp.status_code == 200:
             data = json.loads(resp.text)             
-            return data['img'], data['safe_title']    
+            return data['img'], data['safe_title'].replace('/', '_')    
         return None, None          
 
     # Download image
     def download_image(self):
         try:
-            # retrieve image from the url
+            print self.comic_name
+            print self.image_url
+	    # retrieve image from the url
             # this downloads and saves the image in the script path with name comic_name
             i = urllib.URLopener()
 	    # TODO -> handle special characters which result in errors
