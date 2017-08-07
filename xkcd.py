@@ -53,8 +53,6 @@ class ComicInstance():
     # Download image
     def download_image(self):
         try:
-            print self.comic_name
-            print self.image_url
 	    # retrieve image from the url
             # this downloads and saves the image in the script path with name comic_name
             i = urllib.URLopener()
