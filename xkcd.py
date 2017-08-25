@@ -25,7 +25,7 @@ class ComicInstance():
     '''
     This class contains the methods that allow the search and download of a concrete xkcd comic
     '''
-    def __init__(self, comic_to_grab='', show_image=True):
+    def __init__(self, comic_to_grab = '', show_image = True):
         self.comic_number = comic_to_grab
         self._URL_init = 'https://xkcd.com/'
         if comic_to_grab == '':
@@ -33,7 +33,7 @@ class ComicInstance():
         else:
             self._URL_end = '/info.0.json'
         self._IMG_EXTENSION = {'jpg':'JPEG', 'png':'PNG', 'gif':'GIF'}
-	self._IMG_DIR = os.getcwd() + '/comic_images/' 
+        self._IMG_DIR = os.getcwd() + '/comic_images/' 
         self.image_url, self.comic_name = self.grab_image_url()
         self.show = show_image
         self.txt_explanation = None
@@ -53,28 +53,34 @@ class ComicInstance():
     # Download image
     def download_image(self):
         try:
-	    # retrieve image from the url
+	       # retrieve image from the url
             # this downloads and saves the image in the script path with name comic_name
             i = urllib.URLopener()
-	    # TODO -> handle special characters which result in errors
             s=i.retrieve(self.image_url,
                          self.comic_name)
-	    with Image.open(self.comic_name) as image:
-		# TODO -> Windows check
-		if not os.path.exists(self._IMG_DIR):
-			os.makedirs(self._IMG_DIR)
-                image.save(self._IMG_DIR + self.comic_name, self._IMG_EXTENSION[self.image_url[-3:]])
-            # show comic in UI
-	    os.remove(self.comic_name)
+            self._save_comic()
             return True
         except:
             print "An error ocurred while downloading comic " \
                   +str(self.comic_number)
             return False
+	
+    # Save image
+    def _save_comic(self):
+        with Image.open(self.comic_name) as image:
+        # TODO -> Windows check
+            if not os.path.exists(self._IMG_DIR):
+                os.makedirs(self._IMG_DIR)
+                image.save(self._IMG_DIR + self.comic_name, self._IMG_EXTENSION[self.image_url[-3:]])
+            # show comic in UI
+        os.remove(self.comic_name)
+
+        
+
     # Show image
     def show_image(self):
         if platform.system() == 'Linux':
-            im = Image.open(self._IMG_DIR + self.comic_name)
+            im = Image.open(self._IMG_DIR + self.comic_name + self.image_url[-4:])
             im.show()
         else:
             os.startfile(self._IMG_DIR + '\\'+self.comic_name)
@@ -141,33 +147,50 @@ def get_max_comic(file):
 
     return int(current_max) 
 
+def download_all_comics(args):
+    # download all comics
+    index = 1
+    while True:
+        if index != 404:
+            comic = ComicInstance(str(index), False)
+            downloaded = comic.download_image()
+            if downloaded:
+                print successful_download + str(index)
+                if args.show:
+                    comic.show_image()
+            else:
+                print 'Exiting'
+                return False
+        index += 1
+
+def download_random_comic(args):
+    min_comic = 1
+    max_comic = get_max_comic('xkcd_max.txt') + 1
+    comic = ComicInstance(str(random.choice(range(min_comic, max_comic))))
+    downloaded = comic.download_image()
+    if downloaded:
+        print successful_download
+        if args.show:
+            comic.show_image()
+
+def download_last_comic(args):
+    last_comic = ComicInstance('',True)
+    download_succesful = last_comic.download_image()
+    if download_succesful:
+            print successful_download
+            if args.show:
+                    last_comic.show_image()                        
+    if args.explain:
+            print last_comic.get_explanation()
+
+
 ## Main function
 def main():
     if args.all:
-        # download all comics
-        index = 1
-        while True:
-		if index != 404:
-            		comic = ComicInstance(str(index), False)
-            		downloaded = comic.download_image()
-            		if downloaded:
-                		print successful_download+str(index)
-                		if args.show:
-                    			comic.show_image()
-            		else:
-                		print 'Exiting'
-                		return 
-            	index += 1
+        download_all_comics(args)
 
     elif args.random:
-        min_comic = 1
-        max_comic = get_max_comic('xkcd_max.txt')+1
-        comic = ComicInstance(str(random.choice(range(min_comic, max_comic))))
-        downloaded = comic.download_image()
-        if downloaded:
-            print successful_download
-            if args.show:
-                comic.show_image()
+        download_random_comic(args)
    
     elif args.get and args.comics != []:
             # Check if there was a comic range specified in the arguments
@@ -201,14 +224,8 @@ def main():
                             comic.show_image()
                             
     elif args.get and args.comics == []:
-            last_comic = ComicInstance('',True)
-            download_succesful = last_comic.download_image()
-            if download_succesful:
-                    print successful_download
-                    if args.show:
-                            last_comic.show_image()                        
-            if args.explain:
-                    print last_comic.get_explanation()
+        download_last_comic(args)
+
     else: 
             comics = []
             get_more_comics = True
