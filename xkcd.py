@@ -71,7 +71,7 @@ class ComicInstance():
         # TODO -> Windows check
             if not os.path.exists(self._IMG_DIR):
                 os.makedirs(self._IMG_DIR)
-                image.save(self._IMG_DIR + self.comic_name, self._IMG_EXTENSION[self.image_url[-3:]])
+            image.save(self._IMG_DIR + self.comic_name, self._IMG_EXTENSION[self.image_url[-3:]])
             # show comic in UI
         os.remove(self.comic_name)
 
