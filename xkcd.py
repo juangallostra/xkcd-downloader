@@ -75,8 +75,6 @@ class ComicInstance():
             # show comic in UI
         os.remove(self.comic_name)
 
-        
-
     # Show image
     def show_image(self):
         if platform.system() == 'Linux':
@@ -85,34 +83,40 @@ class ComicInstance():
         else:
             os.startfile(self._IMG_DIR + '\\'+self.comic_name)
 
-    # Get explanation from explainxkcd
-    def get_explanation(self):
-        # build url for explanation
-        if self.comic_number != '':
-            url = 'http://www.explainxkcd.com/wiki/index.php/' + self.comic_number
+    # Get explanation URL from explainxkcd.com
+    def _get_explanation_url(self, comic_num):
+        if comic_num != '':
+            return 'http://www.explainxkcd.com/wiki/index.php/' + comic_num
         else:
-            url = 'http://www.explainxkcd.com/wiki/index.php/Main_Page'
+            return'http://www.explainxkcd.com/wiki/index.php/Main_Page'
 
-        # get html from url
+    def _get_soup_from_url(self, url):
         opener = urllib2.build_opener()
         opener.addheaders = [('User-Agent', 'Mozilla/5.0')]
         response = opener.open(url)
-        page = bs4.BeautifulSoup(response.read(),'html.parser')
+        return bs4.BeautifulSoup(response.read(),'html.parser')
 
-        div = page.find('div', attrs = {'id':'mw-content-text', 'class':'mw-content-ltr'})
+    # Get explanation from explainxkcd
+    def get_explanation(self):
+        # build url for explanation
+        url = self._get_explanation_url(self.comic_number)
+        # get html from url
+        soup = self._get_soup_from_url(url)
+
+        div = soup.find('div', attrs = {'id':'mw-content-text', 'class':'mw-content-ltr'})
 
         # Find all of the text between paragraph tags and strip out the html
-        text = [t.getText() for t in div.find_all('p')]
+        paragraph_text = [paragraph.getText() for paragraph in div.find_all('p')]
         # make sure all characters are ascii encoded
-        text = [t.encode('ascii','ignore') for t in text] 
+        explanation_text = [text.encode('ascii','ignore') for text in paragraph_text] 
         if self.comic_number != '':
-            explanation = '\n'.join(map(str, text))
+            explanation = '\n'.join(map(str, explanation_text))
 
         else:
             exp=[]
             i = 2
-            while text[i] != 'Is this out of date? Clicking here will fix that.\n':
-                    exp += text[i]
+            while explanation_text[i] != 'Is this out of date? Clicking here will fix that.\n':
+                    exp += explanation_text[i]
                     i+=1
             explanation = '\n'.join(map(str, exp))
         self.txt_explanation = explanation
@@ -172,6 +176,8 @@ def download_random_comic(args):
         print successful_download
         if args.show:
             comic.show_image()
+        if args.explain:
+            print comic.get_explanation()
 
 def download_last_comic(args):
     last_comic = ComicInstance('',True)
