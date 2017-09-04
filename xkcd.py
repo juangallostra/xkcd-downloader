@@ -162,6 +162,8 @@ def download_all_comics(args):
                 print successful_download + str(index)
                 if args.show:
                     comic.show_image()
+                if args.explain:
+                    print comic.get_explanation()
             else:
                 print 'Exiting'
                 return False
