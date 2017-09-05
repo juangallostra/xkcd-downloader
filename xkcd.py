@@ -24,6 +24,7 @@ successful_downloads = 'Comics downloaded successfully'
 class ComicInstance():
     '''
     This class contains the methods that allow the search and download of a concrete xkcd comic
+    from its number
     '''
     def __init__(self, comic_to_grab = '', show_image = True):
         self.comic_number = comic_to_grab
@@ -34,12 +35,12 @@ class ComicInstance():
             self._URL_end = '/info.0.json'
         self._IMG_EXTENSION = {'jpg':'JPEG', 'png':'PNG', 'gif':'GIF'}
         self._IMG_DIR = os.getcwd() + '/comic_images/' 
-        self.image_url, self.comic_name = self.grab_image_url()
+        self.image_url, self.comic_name = self.get_comic_data()
         self.show = show_image
         self.txt_explanation = None
 
     # Grab comic image name from number
-    def grab_image_url(self):
+    def get_comic_data(self):
         # build the url for the asked number comic and, once opened, read its html content.
         url = self._URL_init \
             + self.comic_number \
@@ -53,10 +54,10 @@ class ComicInstance():
     # Download image
     def download_image(self):
         try:
-	       # retrieve image from the url
+	        # retrieve image from the url
             # this downloads and saves the image in the script path with name comic_name
-            i = urllib.URLopener()
-            s = i.retrieve(self.image_url,
+            page = urllib.URLopener()
+            image = page.retrieve(self.image_url,
                          self.comic_name)
             self._save_comic()
             return True
@@ -72,7 +73,6 @@ class ComicInstance():
             if not os.path.exists(self._IMG_DIR):
                 os.makedirs(self._IMG_DIR)
             image.save(self._IMG_DIR + self.comic_name + "." + self.image_url[-3:], self._IMG_EXTENSION[self.image_url[-3:]])
-            # show comic in UI
         os.remove(self.comic_name)
 
     # Show image
@@ -146,10 +146,21 @@ def get_max_comic(file):
             f.write(current_max)
         current_max = str(int(current_max) + 1)
         comic = ComicInstance(current_max, False)
-        if comic.grab_image_url()[0] is None:
+        if comic.get_comic_data()[0] is None:
             increase = False
 
     return int(current_max) 
+
+def show_and_explain(args, comic, pretty_format=False):
+    if args.show:
+        comic.show_image()
+    if args.explain:
+        if pretty_format:
+            print '-' * 30 + comic.comic_name + '-' * 30 + '\n'
+            print comic.get_explanation()
+            print '-' * 80 + '\n'
+        else:
+            print comic.get_explanation()
 
 def download_all_comics(args):
     # download all comics
@@ -160,10 +171,7 @@ def download_all_comics(args):
             downloaded = comic.download_image()
             if downloaded:
                 print successful_download + str(index)
-                if args.show:
-                    comic.show_image()
-                if args.explain:
-                    print comic.get_explanation()
+                show_and_explain(args, comic)
             else:
                 print 'Exiting'
                 return False
@@ -176,21 +184,14 @@ def download_random_comic(args):
     downloaded = comic.download_image()
     if downloaded:
         print successful_download
-        if args.show:
-            comic.show_image()
-        if args.explain:
-            print comic.get_explanation()
+        show_and_explain(args, comic)
 
 def download_last_comic(args):
     last_comic = ComicInstance('',True)
     download_succesful = last_comic.download_image()
     if download_succesful:
         print successful_download
-        if args.show:
-            last_comic.show_image()                        
-    if args.explain:
-        print last_comic.get_explanation()
-
+        show_and_explain(args, last_comic)
 
 def download_specific_comics(args):
     # Check if there was a comic range specified in the arguments
@@ -210,18 +211,8 @@ def download_specific_comics(args):
     
     if False not in images:
         print successful_downloads 
-    
-    explanations = []
-    if args.explain:
-        explanations = [comic.get_explanation() for comic in comics]
         for comic in comics:
-            print '-' * 30 + comic.comic_name + '-' * 30 + '\n'
-            print comic.txt_explanation
-            print '-' * 80 + '\n'
-                    
-    for comic in comics:
-        if args.show:
-            comic.show_image()
+            show_and_explain(args, comic, True)
 
 def download_comic():
     comics = []
