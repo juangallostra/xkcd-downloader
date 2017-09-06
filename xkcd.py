@@ -156,9 +156,11 @@ def show_and_explain(args, comic, pretty_format=False):
         comic.show_image()
     if args.explain:
         if pretty_format:
-            print '-' * 30 + comic.comic_name + '-' * 30 + '\n'
+            rows, cols = os.popen('stty size', 'r').read().split()
+            free_side_cols = (int(cols) - len(comic.comic_name))/2
+            print '-' * free_side_cols + comic.comic_name + '-' * free_side_cols + '\n'
             print comic.get_explanation()
-            print '-' * 80 + '\n'
+            print '-' * int(cols) + '\n'
         else:
             print comic.get_explanation()
 
