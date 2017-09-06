@@ -151,14 +151,19 @@ def get_max_comic(file):
 
     return int(current_max) 
 
-def show_and_explain(args, comic, pretty_format=False):
+def pretty_print(comic):
+    rows, cols = os.popen('stty size', 'r').read().split()
+    free_side_cols = (int(cols) - len(comic.comic_name))/2
+    print '-' * free_side_cols + comic.comic_name + '-' * free_side_cols + '\n'
+    print comic.get_explanation()
+    print '-' * int(cols) + '\n'
+
+def show_and_explain(args, comic, pretty_format=True):
     if args.show:
         comic.show_image()
     if args.explain:
         if pretty_format:
-            print '-' * 30 + comic.comic_name + '-' * 30 + '\n'
-            print comic.get_explanation()
-            print '-' * 80 + '\n'
+            pretty_print(comic)
         else:
             print comic.get_explanation()
 
@@ -212,7 +217,7 @@ def download_specific_comics(args):
     if False not in images:
         print successful_downloads 
         for comic in comics:
-            show_and_explain(args, comic, True)
+            show_and_explain(args, comic)
 
 def download_comic():
     comics = []
@@ -224,7 +229,7 @@ def download_comic():
         if s:
             print successful_downloads
             comics[-1].show_image()                        
-            print comics[-1].get_explanation()
+            pretty_print(comics[-1])
 
         more_comics = raw_input("Want to search for another comic? (y/n): ")
         if more_comics != 'y':
