@@ -152,11 +152,15 @@ def get_max_comic(file):
     return int(current_max) 
 
 def pretty_print(comic):
-    rows, cols = os.popen('stty size', 'r').read().split()
-    free_side_cols = (int(cols) - len(comic.comic_name))/2
-    print '-' * free_side_cols + comic.comic_name + '-' * free_side_cols + '\n'
-    print comic.get_explanation()
-    print '-' * int(cols) + '\n'
+    if platform.system() == 'Linux':
+        rows, cols = os.popen('stty size', 'r').read().split()
+        free_side_cols = (int(cols) - len(comic.comic_name))/2
+        print '-' * free_side_cols + comic.comic_name + '-' * free_side_cols + '\n'
+        print comic.get_explanation()
+        print '-' * int(cols) + '\n'
+    else:
+        print comic.comic_name + '\n'
+        print comic.get_explanation()
 
 def show_and_explain(args, comic, pretty_format=True):
     if args.show:
