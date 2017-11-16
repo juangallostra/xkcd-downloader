@@ -38,10 +38,10 @@ Depending on the value stored at xkcd\_max.txt this might be a bit slow since it
 
 where the numbers specify the comics to download, the flag ```-g``` stands for **get** (if the flag is not present no comics will be downloaded), the flag ```-e``` stands for **explain** (will print explanations directly to console separating them y dashed lines) and the flag ```-s``` stands for **show**, which will show the downloaded comics. Finally, the flag ```-r``` downloads a **random** comic and the flag ```-a``` will download **all** the available comics. You will need some patience though.
 
-If no comic numbers or ranges are specified but the flag **-g** is set the latest comic will be downloaded.
+If no comic numbers or ranges are specified but the flag ```-g``` is set the latest comic will be downloaded.
 
 ### Without command line arguments
-If no flags are passed the program will execute normally. Then it will ask for a specific comic number and download it. In the case that no input comic number is given, it will download the latest one. After that it will ask the user if another comic is to be downloaded. If the answer is no, the program will terminate its execution. 
+If no flags are passed the program will execute normally. It will ask for a specific comic number and download it. In the case that no input comic number is given, it will download the latest one. After that it will ask the user if another comic is to be downloaded. If the answer is no, the program will terminate its execution. 
 
 In this case, the program will always show the explanation at http://www.explainxkcd.com/ for the selected comic.
 
