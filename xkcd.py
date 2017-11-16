@@ -26,17 +26,19 @@ class ComicInstance():
     This class contains the methods that allow the search and download of a concrete xkcd comic
     from its number
     '''
-    def __init__(self, comic_to_grab = '', show_image = True):
+    def __init__(self, comic_to_grab = ''):
         self.comic_number = comic_to_grab
         self._URL_init = 'https://xkcd.com/'
         if comic_to_grab == '':
             self._URL_end = 'info.0.json'
+            self._EXPLAIN_TAIL_URL = 'Main_Page'
         else:
             self._URL_end = '/info.0.json'
+            self._EXPLAIN_TAIL_URL = self.comic_number
+        self._EXPLAIN_URL = 'http://www.explainxkcd.com/wiki/index.php/'
         self._IMG_EXTENSION = {'jpg':'JPEG', 'png':'PNG', 'gif':'GIF'}
         self._IMG_DIR = os.getcwd() + '/comic_images/' 
         self.image_url, self.comic_name = self.get_comic_data()
-        self.show = show_image
         self.txt_explanation = None
 
     # Grab comic image name from number
@@ -83,13 +85,6 @@ class ComicInstance():
         else:
             os.startfile(self._IMG_DIR + '\\'+self.comic_name)
 
-    # Get explanation URL from explainxkcd.com
-    def _get_explanation_url(self, comic_num):
-        if comic_num != '':
-            return 'http://www.explainxkcd.com/wiki/index.php/' + comic_num
-        else:
-            return'http://www.explainxkcd.com/wiki/index.php/Main_Page'
-
     def _get_soup_from_url(self, url):
         opener = urllib2.build_opener()
         opener.addheaders = [('User-Agent', 'Mozilla/5.0')]
@@ -98,29 +93,32 @@ class ComicInstance():
 
     # Get explanation from explainxkcd
     def get_explanation(self):
-        # build url for explanation
-        url = self._get_explanation_url(self.comic_number)
-        # get html from url
-        soup = self._get_soup_from_url(url)
+        if self.txt_explanation is None:
+            # build url for explanation
+            url = self._EXPLAIN_URL + self._EXPLAIN_TAIL_URL
+            # get html from url
+            soup = self._get_soup_from_url(url)
 
-        div = soup.find('div', attrs = {'id':'mw-content-text', 'class':'mw-content-ltr'})
+            div = soup.find('div', attrs = {'id':'mw-content-text', 'class':'mw-content-ltr'})
 
-        # Find all of the text between paragraph tags and strip out the html
-        paragraph_text = [paragraph.getText() for paragraph in div.find_all('p')]
-        # make sure all characters are ascii encoded
-        explanation_text = [text.encode('ascii','ignore') for text in paragraph_text] 
-        if self.comic_number != '':
-            explanation = '\n'.join(map(str, explanation_text))
+            # Find all of the text between paragraph tags and strip out the html
+            paragraph_text = [paragraph.getText() for paragraph in div.find_all('p')]
+            # make sure all characters are ascii encoded
+            explanation_text = [text.encode('ascii','ignore') for text in paragraph_text] 
+            if self.comic_number != '':
+                explanation = '\n'.join(map(str, explanation_text))
 
+            else:
+                exp=[]
+                i = 2
+                while explanation_text[i] != 'Is this out of date? Clicking here will fix that.\n':
+                        exp += explanation_text[i]
+                        i+=1
+                explanation = '\n'.join(map(str, exp))
+            self.txt_explanation = explanation
+            return explanation
         else:
-            exp=[]
-            i = 2
-            while explanation_text[i] != 'Is this out of date? Clicking here will fix that.\n':
-                    exp += explanation_text[i]
-                    i+=1
-            explanation = '\n'.join(map(str, exp))
-        self.txt_explanation = explanation
-        return explanation
+            return self.txt_explanation
 
 
 ## Command line argument parsing
@@ -145,18 +143,22 @@ def get_max_comic(file):
         with open(file, "w") as f:
             f.write(current_max)
         current_max = str(int(current_max) + 1)
-        comic = ComicInstance(current_max, False)
+        comic = ComicInstance(current_max)
         if comic.get_comic_data()[0] is None:
             increase = False
 
     return int(current_max) 
 
 def pretty_print(comic):
-    rows, cols = os.popen('stty size', 'r').read().split()
-    free_side_cols = (int(cols) - len(comic.comic_name))/2
-    print '-' * free_side_cols + comic.comic_name + '-' * free_side_cols + '\n'
-    print comic.get_explanation()
-    print '-' * int(cols) + '\n'
+    if platform.system() == 'Linux':
+        rows, cols = os.popen('stty size', 'r').read().split()
+        free_side_cols = (int(cols) - len(comic.comic_name))/2
+        print '-' * free_side_cols + comic.comic_name + '-' * free_side_cols + '\n'
+        print comic.get_explanation()
+        print '-' * int(cols) + '\n'
+    else:
+        print comic.comic_name + '\n'
+        print comic.get_explanation()
 
 def show_and_explain(args, comic, pretty_format=True):
     if args.show:
@@ -172,7 +174,7 @@ def download_all_comics(args):
     index = 1
     while True:
         if index != 404:
-            comic = ComicInstance(str(index), False)
+            comic = ComicInstance(str(index))
             downloaded = comic.download_image()
             if downloaded:
                 print successful_download + str(index)
@@ -192,7 +194,7 @@ def download_random_comic(args):
         show_and_explain(args, comic)
 
 def download_last_comic(args):
-    last_comic = ComicInstance('',True)
+    last_comic = ComicInstance('')
     download_succesful = last_comic.download_image()
     if download_succesful:
         print successful_download
@@ -211,7 +213,7 @@ def download_specific_comics(args):
     else:        
         comics_n = [int(comic) for comic in args.comics]
     
-    comics = [ComicInstance(str(comic_n), args.show) for comic_n in comics_n]
+    comics = [ComicInstance(str(comic_n)) for comic_n in comics_n]
     images = [comic.download_image() for comic in comics]
     
     if False not in images:
