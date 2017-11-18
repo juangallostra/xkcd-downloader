@@ -46,10 +46,4 @@ If no flags are passed the program will execute normally. It will ask for a spec
 In this case, the program will always show the explanation at http://www.explainxkcd.com/ for the selected comic.
 
 ## TODO
-- ~~When downloading more than one comic the **show** flag is not working well~~
-- ~~Add support for downloading ranges of comics in the way 1-100, which will download comics 1,2,3,...,100~~
-- ~~Add support for downloading all comics~~
-- ~~Add support for downloading random comic~~
-- Add support for writing explanations into ```.txt``` files
-- ~~Improve explanation format when printed in terminal~~
-- Fix download error when image name has special characters such as underscores.
+Check the issues page to know the future enhancements or bugs to be corrected.
