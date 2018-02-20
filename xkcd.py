@@ -22,10 +22,10 @@ successful_downloads = 'Comics downloaded successfully'
 
 ## Comic instance class
 class ComicInstance():
-    '''
+    """
     This class contains the methods that allow the search and download of a concrete xkcd comic
     from its number
-    '''
+    """
     def __init__(self, comic_to_grab = ''):
         self.comic_number = comic_to_grab
         self._URL_init = 'https://xkcd.com/'
