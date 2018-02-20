@@ -41,7 +41,7 @@ class ComicInstance():
         self.image_url, self.comic_name = self.get_comic_data()
         self.txt_explanation = None
 
-    # Grab comic data name from number
+    # Grab comic data from number
     def get_comic_data(self):
     	"""
     	This method obtains the comic image data from the comic number.
