@@ -62,6 +62,12 @@ class ComicInstance():
 
     # Download image
     def download_image(self):
+    	"""
+    	Retrieve the actual comic image from its url and name via urllib
+    	and save it.
+
+    	:return: True if successful download else false
+    	"""
         try:
 	        # retrieve image from the url
             # this downloads and saves the image in the script path with name comic_name
