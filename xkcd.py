@@ -41,9 +41,16 @@ class ComicInstance():
         self.image_url, self.comic_name = self.get_comic_data()
         self.txt_explanation = None
 
-    # Grab comic image name from number
+    # Grab comic data name from number
     def get_comic_data(self):
-        # build the url for the asked number comic and, once opened, read its html content.
+    	"""
+    	This method obtains the comic image data from the comic number.
+    	To do so, it builds the api url for the asked comic number and queries
+    	the xkcd webpage. From the JSON response it extracts the comic title
+    	and the image url.
+
+    	:return: image url, title or None, None
+    	"""
         url = self._URL_init \
             + self.comic_number \
             + self._URL_end
