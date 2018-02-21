@@ -83,6 +83,12 @@ class ComicInstance():
 	
     # Save image
     def _save_comic(self):
+        """
+        Save the image of a comic in the file system dir as 
+        specified by IMG_DIR
+
+        :return: None
+        """
         with Image.open(self.comic_name) as image:
         # TODO -> Windows check
             if not os.path.exists(self._IMG_DIR):
