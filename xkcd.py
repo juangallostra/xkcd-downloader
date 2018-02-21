@@ -98,6 +98,12 @@ class ComicInstance():
 
     # Show image
     def show_image(self):
+        """
+        Show in the screen the image of the comic attached to to the current
+        ComicInstance.
+
+        :return: None
+        """
         if platform.system() == 'Linux':
             im = Image.open(self._IMG_DIR + self.comic_name + self.image_url[-4:])
             im.show()
