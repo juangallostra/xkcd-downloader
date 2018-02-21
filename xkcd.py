@@ -66,7 +66,7 @@ class ComicInstance():
     	Retrieve the actual comic image from its url and name via urllib
     	and save it.
 
-    	:return: True if successful download else false
+    	:return: True if successful download else False
     	"""
         try:
 	        # retrieve image from the url
