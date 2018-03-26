@@ -1,4 +1,4 @@
-# xkcd_downloader
+# xkcd-downloader
 Small program that allows the download and visualization of xkcd comics to the folder where the script is located. It can also download the explanation found at http://www.explainxkcd.com/ for the selected comic.
 
 ## Requirements:
