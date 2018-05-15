@@ -22,10 +22,10 @@ successful_downloads = 'Comics downloaded successfully'
 
 ## Comic instance class
 class ComicInstance():
-    '''
+    """
     This class contains the methods that allow the search and download of a concrete xkcd comic
     from its number
-    '''
+    """
     def __init__(self, comic_to_grab = ''):
         self.comic_number = comic_to_grab
         self._URL_init = 'https://xkcd.com/'
@@ -41,9 +41,16 @@ class ComicInstance():
         self.image_url, self.comic_name = self.get_comic_data()
         self.txt_explanation = None
 
-    # Grab comic image name from number
+    # Grab comic data from number
     def get_comic_data(self):
-        # build the url for the asked number comic and, once opened, read its html content.
+    	"""
+    	This method obtains the comic image data from the comic number.
+    	To do so, it builds the api url for the asked comic number and queries
+    	the xkcd webpage. From the JSON response it extracts the comic title
+    	and the image url.
+
+    	:return: image url, title or None, None
+    	"""
         url = self._URL_init \
             + self.comic_number \
             + self._URL_end
@@ -55,6 +62,12 @@ class ComicInstance():
 
     # Download image
     def download_image(self):
+    	"""
+    	Retrieve the actual comic image from its url and name via urllib
+    	and save it.
+
+    	:return: True if successful download else False
+    	"""
         try:
 	        # retrieve image from the url
             # this downloads and saves the image in the script path with name comic_name
@@ -70,6 +83,12 @@ class ComicInstance():
 	
     # Save image
     def _save_comic(self):
+        """
+        Save the image of a comic in the file system dir as 
+        specified by IMG_DIR
+
+        :return: None
+        """
         with Image.open(self.comic_name) as image:
         # TODO -> Windows check
             if not os.path.exists(self._IMG_DIR):
@@ -79,6 +98,12 @@ class ComicInstance():
 
     # Show image
     def show_image(self):
+        """
+        Show in the screen the image of the comic attached to to the current
+        ComicInstance.
+
+        :return: None
+        """
         if platform.system() == 'Linux':
             im = Image.open(self._IMG_DIR + self.comic_name + self.image_url[-4:])
             im.show()
@@ -258,4 +283,4 @@ def main():
 
 # Main program
 if __name__=="__main__":
-        main()
+    main()
