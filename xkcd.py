@@ -196,13 +196,14 @@ def show_and_explain(args, comic, pretty_format=True):
 
 def download_all_comics(args):
     # download all comics
+    max_comic = get_max_comic('xkcd_max.txt') + 1
     index = 1
     while True:
         if index != 404:
             comic = ComicInstance(str(index))
             downloaded = comic.download_image()
             if downloaded:
-                print successful_download + str(index)
+                print successful_download + str(index) + " out of " + str(max_comic) + " ("+ str(100 * float(index) / max_comic) +" %)"
                 show_and_explain(args, comic)
             else:
                 print 'Exiting'
