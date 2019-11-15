@@ -2,7 +2,7 @@
 Small program (intended to be used as a command line utility) that allows the download and visualization of xkcd comics to the folder where the script is located. It can also download the explanation found at http://www.explainxkcd.com/ for the selected comic.
 
 ## Requirements:
-- Python 2.7
+- Python 3
 - Beautiful Soup
 - PIL
 - requests
